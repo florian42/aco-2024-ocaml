@@ -12,11 +12,11 @@ let () =
                     | _ -> failwith "Invalid input format"
             with End_of_file -> (list_2,  list_1)
         in
-        let (list_1, list_2) = read_lines [] [] in
-        let sorted_list_1 = List.sort compare list_1 in
-        let sorted_list_2 = List.sort compare list_2 in
-        let distances = List.map2 (fun x y -> abs (x-y)) sorted_list_1 sorted_list_2 in
-        let total_distance = List.fold_left (+) 0 distances in
+        let total_distance = read_lines [] []
+            |> (fun (list_1, list_2) -> (List.sort compare list_1, List.sort compare list_2))
+            |> fun (sorted_list_1, sorted_list_2) -> List.map2 (fun x y -> abs (x-y)) sorted_list_1 sorted_list_2
+            |> List.fold_left (+) 0
+        in
         Printf.printf "%d\n" total_distance;
         close_in input_channel;
     with error ->

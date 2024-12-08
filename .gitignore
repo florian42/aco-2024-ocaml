@@ -1,1 +1,4 @@
 *input*.txt
+_build/default
+_build/install/default
+_build
