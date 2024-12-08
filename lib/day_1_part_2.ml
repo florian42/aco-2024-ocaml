@@ -1,5 +1,14 @@
 let input = "./input.txt"
 
+let count_occurrences lst =
+  let table = Hashtbl.create (List.length lst) in
+  List.iter
+    (fun item ->
+      Hashtbl.replace table item
+        (1 + (Hashtbl.find_opt table item |> Option.value ~default:0)))
+    lst;
+  table
+
 let () =
   let input_channel = open_in input in
   try
@@ -15,14 +24,17 @@ let () =
         | _ -> failwith "Invalid input format"
       with End_of_file -> (list_2, list_1)
     in
-    let total_distance =
+    let similiarity_score =
       ( read_lines [] [] |> fun (list_1, list_2) ->
-        (List.sort compare list_1, List.sort compare list_2) )
-      |> fun (sorted_list_1, sorted_list_2) ->
-      List.map2 (fun x y -> abs (x - y)) sorted_list_1 sorted_list_2
+        (list_1, count_occurrences list_2) )
+      |> fun (list_1, occurrences) ->
+      List.map
+        (fun x ->
+          (Hashtbl.find_opt occurrences x |> Option.value ~default:0) * x)
+        list_1
       |> List.fold_left ( + ) 0
     in
-    Printf.printf "%d\n" total_distance;
+    Printf.printf "%d\n" similiarity_score;
     close_in input_channel
   with error ->
     close_in_noerr input_channel;
